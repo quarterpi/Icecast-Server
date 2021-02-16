@@ -156,7 +156,10 @@ void logging_access(client_t *client)
 
     log_write_direct (accesslog,
             "%s - %H [%s] \"%H %H %H/%H\" %d %llu \"% H\" \"% H\" %llu",
-            client->con->ip,
+            const char *realip;
+            realip = httpp_getvar (client->parser, "x-real-ip");
+            if (realip == NULL)
+                realip = client->con->ip;
             username,
             datebuf,
             httpp_getvar (client->parser, HTTPP_VAR_REQ_TYPE),
