@@ -678,6 +678,11 @@ static inline xmlNodePtr __add_listener(client_t        *client,
     const char *tmp;
     xmlNodePtr node;
     char buf[22];
+    
+    const char *realip;
+    realip = httpp_getvar (client->parser, "x-real-ip");
+    if (realip == NULL)
+        realip = client->con->ip;
 
     /* TODO: kh has support for a child node "lag". We should add that.
      * BEFORE RELEASE NEXT DOCUMENT #2097: Changed case of child nodes to lower case.
@@ -693,7 +698,7 @@ static inline xmlNodePtr __add_listener(client_t        *client,
     xmlSetProp(node, XMLSTR("id"), XMLSTR(buf));
     xmlNewTextChild(node, NULL, XMLSTR(mode == OMODE_LEGACY ? "ID" : "id"), XMLSTR(buf));
 
-    xmlNewTextChild(node, NULL, XMLSTR(mode == OMODE_LEGACY ? "IP" : "ip"), XMLSTR(client->con->ip));
+    xmlNewTextChild(node, NULL, XMLSTR(mode == OMODE_LEGACY ? "IP" : "ip"), XMLSTR(realip));
 
     tmp = httpp_getvar(client->parser, "user-agent");
     if (tmp)
